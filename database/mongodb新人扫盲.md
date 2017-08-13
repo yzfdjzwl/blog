@@ -1,6 +1,8 @@
+# 目录
+
 * [前言](#前言)
-* [数据库基本命令](#数据库基本命令)
-* [集合(表)命令](#集合表命令)
+* [使用bash操作mongodb](#使用bash操作mongodb)
+    * [数据库基本命令](#数据库基本命令)
     * [增加数据](#增加数据)
     * [删除数据](#删除数据)
     * [更新数据](#更新数据)
@@ -8,43 +10,39 @@
         * [使用save()命令实现upsert](#使用save命令实现upsert)
         * [自动更新信息](#自动更新信息)
     * [查询数据](#查询数据)
-* [aggregate](#aggregate)
-    * [$group](#group)
-    * [$sum](#sum)
-    * [$limit](#limit)
-    * [$match](#match)
-    * [$sort](#sort)
-    * [$unwind](#unwind)
-    * [$project](#project)
-    * [$skip](#skip)
-* [mongoose的使用](#mongoose的使用)
+    * [aggregate](#aggregate)
+        * [$group](#group)
+        * [$sum](#sum)
+        * [$limit](#limit)
+        * [$match](#match)
+        * [$sort](#sort)
+        * [$unwind](#unwind)
+        * [$project](#project)
+        * [$skip](#skip)
+* [使用node操作mongodb](#使用node操作mongodb)
+* [使用mongoose](#使用mongoose)
+
 
 ## 前言
 
 1. [mongodb是什么?](https://www.mongodb.com/), 需fq
 2. [如何安装mongodb?](http://www.runoob.com/mongodb/mongodb-window-install.html)
 
-## 数据库基本命令
+我将从2种语言来理解mongodb的基本操作, 分别是`javascript, bash`, 最后再介绍一下`mongoose`的常用的API。
+
+## 使用bash操作mongodb
+
+### 数据库基本命令
 
 1. 显示所有数据库: `show dbs` 
-
 2. 创建/使用数据库：`use dbName`
-
 3. 创建数据库表，在mongoDB里又将表称为集合(collections), 因此创建表:`db.createCollection("collectionName")`
-
 4. 显示数据库下的所有集合(表): `show tables / show collections`
-
 5. 删除当前数据库: `db.dropDatabase()`
-
 6. 查看当前所使用的数据库: `db.getName()`
-
 7. 显示当前数据库的状态: `db.stats()` 
-
 8. 显示当前数据库的版本: `db.version()`
-
 9. 注意: `collection`和`table`概念差不多，`doc`和`row`概念差不多。
-
-## 集合(表)命令
 
 ### 增加数据
 
@@ -60,7 +58,7 @@ db.tableName.save({username: "john", age: "18"});
 
 // 它们之间的区别
 
-// 1. 使用save，如果对象不存在则插入，如果存在，则会调用update方法。如果是insert,或忽略调用update方法。 
+// 1. 使用save，如果对象不存在则插入，如果存在，则会调用update方法。如果是insert, 或忽略调用update方法。 
 
 // 2. insert可以插入一个列表，而不用遍历，效率高。而save需要遍历，效率不如insert。
 ```
@@ -120,29 +118,21 @@ db.stu.update({'name': 'yuzf'}, {$unset: {'grade': 200}});
 ### 查询数据
 
 1. 获取指定名称的集合: `db.getCollection("tableName");`
-
 2. 获取集合里所有的数据:`db.tableName.find().pretty();`
-
 3. 获取集合里的指定数据:`db.users.find({'uid', 'yuzf'}).pretty();`
-
 4. 获取集合里的指定数据，然后指向看指定数据, 在第二个参数里添加键，并设置键的值为1即可:`db.users.find({'uid': 'yuzf'}, {'uid': 1}).pretty();`
-
 5. 使用函数sort, limit, skip
     * 以uid进行排序: `db.users.find().sort({ 'uid': 1 });`
     * 限制查询结果返回的最大数目为10: `db.users.find().limit(10);`
     * 返回查询结果除了前20条的文档的其他文档: `db.users.find().skip(20);`
-
 6. 使用固定集合、自然顺序和$natural
     * 固定集合必须使用`createCollection()`, 以显示的方式创建: `db.createCollection("users", {capped: true, size: 20480})`
     * 因为固定集合的顺序和插入顺序是一样的, 如果想要逆转排序: `db.users.find().sort({ $natural: -1 }).limit(10);`
-
 7. 获取单个文档: `db.users.findOne();`
-
 8. 使用常用的聚合命令`count, distinct, group`
     * 统计users表里有多少个文档: `db.users.count();`
     * 去重: `db.users.distinct('uid');`, 将会返回一个数组，数组里包含的元素是去重了的`uid`。 
     * 将结果分组: 
-
 ```
   db.calendars.group({
     key: {uid: true},
@@ -178,13 +168,13 @@ db.stu.update({'name': 'yuzf'}, {$unset: {'grade': 200}});
     * 使用slice来获取文档(分页): `不知道为什么，自己跑的时候报错，$slice unknown operator`
     * 还有一些其他的，感觉不是很常用。
 
-## aggregate
+### aggregate
 
 就我自己的理解，aggregate相当于Linux系统下的管道符，当前得到的结果可以作为下一次计算的输入。
 
 有很多管道操作符，这里只是介绍一部分常用的操作符。
 
-### $group
+#### $group
 
 关于group操作符, 它类似于关系数据库里的`group by`, 需要记住以下这几点:
 
@@ -207,7 +197,7 @@ db.phones.aggregate({$group: {_id: "$device"}, total: {$sum: "$price"}});
 {"id": "iPhone6P", "total": 13000}
 ```
 
-### $sum
+#### $sum
 
 如果我们想要找到一个文档，计数就加一。那么我们可以使用`$sum`。就像上面的日子改写后就成了下面这样:
 
@@ -220,7 +210,7 @@ db.phones.aggregate({$group: {_id: "$device"}, count: {$sum: 1}});
 {"id": "iPhone6P", "count": 10}
 ```
 
-### $limit
+#### $limit
 
 如果我们想要限制得到的数据只有10条，那么就会用到了`$limit`， 我认为它和查询时的`limit()`没有什么区别。
 
@@ -228,7 +218,7 @@ db.phones.aggregate({$group: {_id: "$device"}, count: {$sum: 1}});
 db.phones.aggregate({$group: {_id: "$device", count: {$sum: 1}}}, {$limit: 10});
 ```
 
-### $match
+#### $match
 
 我猜想这个管道符应该用得特别多，通过它可在聚集管道中高效地返回一个普通地MongoDB查询的结果。
 
@@ -238,15 +228,15 @@ db.phones.aggregate({$group: {_id: "$device", count: {$sum: 1}}}, {$limit: 10});
 db.phones.aggregate({$match: {"device": "iPhone9S"}});
 ```
 
-### $sort
+#### $sort
 
 它和普通查询里的`sort`没有什么不同。
 
-### $unwind
+#### $unwind
 
 这应该也是一个特别常用的管道符, 它接受一个数组并将每个元素分割到一个新的文档中（在内存中而不是添加到集合中）。
 
-### $project
+#### $project
 
 如果我们查询出来我们想要的数据，但是只是想要一部分的字段，该如何呢？那么就会用到`$project`这个管道符了。
 
@@ -255,7 +245,7 @@ db.phones.aggregate({$match: {"device": "iPhone9S"}});
 db.phones.aggregate({$project: {_id: 1, device: 1}});
 ```
 
-### $skip
+#### $skip
 
 同样，它和普通查询里的`skip`没有什么不同。如果我们想要得到3000条数据里的第1500~1510条数据该怎么写呢?
 
@@ -263,7 +253,13 @@ db.phones.aggregate({$project: {_id: 1, device: 1}});
 db.phones.aggregate({$skip: 1500, $limit: 10});
 ```
 
-## mongoose的使用
+## 使用node操作mongodb
+
+### 连接到mongo
+
+### 
+
+## 使用mongoose
 
 未完待续...
 
