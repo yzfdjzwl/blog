@@ -1,49 +1,162 @@
-## 发现性能问题
+## React
 
-上一次导入数据后，发现系统十分的卡顿，但是才仅仅1000多条数据而已，怎么会让系统变得如何的卡顿呢?于是我开始走在排查系统卡顿的原因的道路上。
+### 如何同步更新state
 
-首先，先定位问题是出现在前端上还是后端上。打开浏览器，输入`localhost:7000`, 然后F12打开netword。启动后端项目，查看log。切换回浏览器，右键刷新。结果发现好多些问题:
+由于setState方法是异步的，而通常很多时候在一个生命周期里更新state后需要在另一个生命周期里使用这个state。
 
-1. 请求发送的个数比较多。
-2. 后端每个接口的响应时间都比较长，都超过了1s，这明显有问题。
-3. 前端很多请求从: 发送请求到页面渲染成功所需要的时间大于了10S(发送请求时间+后端接口响应时间+下载资源时间，即回传数据时间+页面渲染时间)。
-
-从上面这几个现象可以看出:
-
-1. 后端有明显的问题。
-2. 前端暂时没有什么问题。
-
-好好分析一下，为什么后端每个接口的响应时间都会超过1s，mongodb是出了名的速度快，一般查询数据就几十ms，普通查询也不会超过300ms。但是看到的接口响应时间却是超过了1s，有的还是明显3，4s。
-
-苦苦冥想，细细推测，思来想去，都不知道是怎么回事，最后只有采用删代码的方式来定位问题了。
-
-当删除类似于下面的代码的时候
+下面介绍几个方法
 
 ```
-Schema.virtual('affixes', {
-    ref: 'Affix',
-    localField: '_id',
-    foreignField: 'businessId',
+// 1
+this.setState({}, () => {
+    this.doSomething();
+});
+
+doSomething() {
+    console.log(this.state);
+}
+
+// 2 使用setState
+
+// 其他
+this.setState((prevState, props) => {
+    return { counter: prevState.counter + 1 };
 });
 ```
 
-这个时候，发现后端接口的响应时间正常了，可以判断，这段代码起到了一定的作用，但是这只是简单的连表查询而已。为什么就导致接口响应时间多那么多呢？
+## mongodb
 
-我继续分析，进入到controller.js里面，将与表关联查询的代码找出来，终于，我快要发现元凶了，删除这几行代码，ok，同样，响应时间正常了。
+### Object_id
 
-仔细分析这几行代码，发现了一个很重要的事情: 居然是全表查询！！而且是3张表关联的全表查询！！所以...查询的数据差不多就是这个量: 2000 * 2000 * 2000, 也怪不得为什么响应时间会超出1s了。
+由于Object_id是对象，因此在比较的时候一定不能直接比较两个ID是否相等，即不能`if (a == b)`, 通过查阅官方的文档，了解到可以这样用: `if (a.toString() === b.toString())`
 
-第一个元凶已经被抓住了。但是我还并不知道为什么前端从请求到渲染成功的时间怎么会超过10s，这简直不能忍。
+### mongoose: virtual populate
 
-清空network，然后刷新，重新发送请求，可以看见发送了5个左右的请求，而查看后端的log发现其中3个请求都是在做表关联的全表查询，并且reply的时候还是将所有的数据都返回到前端里去了。
+在使用mongoose进行表关联查询的时候，我将查询出来的数据在后端打印出来，但是发现打印不出来任何东西。
 
-ok，现在我大概已经知道为什么会有超过10s的响应时间了，下载的数据量也比较大，所以响应时间 = 发送请求时间 + 后端处理时间 + 下载资源时间 + 渲染时间, 由于数据量比较大，所以导致最后的两个时间也不小。
+我还以为是代码写错了，应该一番资料的查阅，了解到真实的情况是这样的: "通过virual查询出来的数据，打印出来是无法看见的，因为它的类型是***(我也不知道)的，需要将它转换为对象，才可以打印出来"。
 
-现在大概已经都找出了为什么页面会卡顿并且迟缓。原因就是没有做后端分页，系统里用的是前端分页。
+同样，还有一个地方需要注意:
 
-## 性能优化总结
+通过virtual查询出来的数据，如果不对结果进行操作，那么返回到前端的数据就是"_doc", 但是如果要对查询的结果进行操作，此时操作的数据不是"_doc"， 而是整个对象, 因此需要过滤一次(`const docs = results.map(x => x._doc)`)。
 
-1. 查询数据避免多张表关联全表查询。
-2. 先过滤再关联查询，而不是先查询再关联表。
-3. react里多个列表，一定要设置key。
-4. 分页一定不要前端做，因为数据量大了肯定要崩掉的。
+### mongodb shell导出到csv
+
+```
+mongoexport --host localhost --db seed_crm --collection customers --type=csv --out customer.csv --fields firstname,middlenamae,lastname
+```
+
+## node
+
+### axios与hapi.js结合使用
+
+```
+// get
+axios.get('/xx', {
+    params: {
+        a,
+        b,
+        c,
+    },
+});
+
+// schema
+function xx() {
+    return {
+        query: {
+            a: Joi....
+        }
+    };
+}
+
+// post
+axios.post('/xx', {
+    a,
+    b,
+    c,
+});
+
+// schema
+function xx() {
+    return {
+        payload: {
+            a: Joi
+        }
+    };
+}
+```
+
+## 代码技巧
+
+### forEach+if+push ===> filter+concat
+
+单从代码的整洁度来讲，这是一个很不错的方式。
+
+```
+// 只是简单的举例
+let results = [];
+const data = [1, 1, 2, 2, 3, 3];
+data.forEach(x => {
+    if (x === 2) {
+        results.push(x);
+    }
+});
+
+// to this
+let results = [];
+const data = [1, 1, 2, 2, 3, 3];
+results = results.concat(data.filter(x => x === 2));
+```
+
+### Promise await
+
+超过2个await建议使用Promise.all()
+
+### ES6解构
+
+```
+const value1 = values[0];
+const value2 = values[1];
+
+// to this, 数组的解构
+const [value1, value2] = values;
+```
+
+### 数组的几个方法
+
+对于数组的几个常见的方法，要使用`return null 或者 return false`, 我知道这是什么意思, 就是不太好表达出来。
+
+### 对象取值兼容
+
+由于经常涉及到需要取对象的某某属性值，但是该对象可能不存在某某值，因此就会导致报错。故一般使用的办法有两个:
+
+1. 使用loadsh库。
+2. 做兼容。如下:
+```
+const defaultBy = (Person || {}).default;
+// 或者这样的
+const defaultBy = Person.default || '';
+```
+
+### find
+
+多使用ES6里面的find方法，很好用的。
+
+## 坑
+
+### mongoose
+
+在mongoose的model里面没有某个字段，因为需求，需要向数据库里插入某个字段。然后查询数据打印出来，可以看见这个数据，但是在使用的时候，它的值都是`undefined`, 后来才知道，这是mongoose的一个机制，需要在`schame`里面，将直接插入的那个字段给加上。
+
+### Promise.resolve
+
+resolve函数里面只能跟一个值，如果要resolve多个值，需要用对象包裹起来。
+
+### Promise.all
+
+Promise.all需要所有的Promise都resolve或者reject, 如果只有一部分完成了这两个操作，那么是会出问题的。
+
+### React数据传递
+
+`x={true} 与 x="true"`在子组件里，得到的数据结果是不一样的。
+请看这里: [JSX Boolean](https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-named-as-default.md)
