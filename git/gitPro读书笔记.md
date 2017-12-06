@@ -279,8 +279,8 @@ git checkout -b localDev upstream/dev
 下面我们看一个例子:
 
 ```
-git checkout master 
-git rebase dev 
+git checkout master
+git rebase dev
 ```
 
 Git的底层实现实现如下(个人的理解)：
@@ -296,7 +296,7 @@ Git的底层实现实现如下(个人的理解)：
 1. 找到master分支与dev分支的共同祖先，假如为M。
 2. 所谓变基，即是改变基底，git rebase dev的意思是将当前master分支的基底改为dev分支的最后一次提交。
 3. 然后对比当前分支(master)相对于该祖先的历次提交，提取相应的修改并存为临时文件(L)。
-4. 然后以dev最后的一次commit为基底，然后将之前存的临时文件(L)的修改按序应用。 
+4. 然后以dev最后的一次commit为基底，然后将之前存的临时文件(L)的修改按序应用。
 
 一般我们使用rebase的目的，是想要得到一个能在远程分支上干净应用的补丁。它和merge的最终结果是一样的，只是得到的commit时间线不一样。
 

@@ -5,7 +5,7 @@
 git pull <远程仓库> <远程分支名>:<本地分支名>
 
 // 如
-git pull upstream master:dev 
+git pull upstream master:dev
 ```
 
 `git fetch`: 相当于是从远程获取最新版本到本地，不会自动merge。
