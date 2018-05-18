@@ -1,10 +1,9 @@
-# 目录
-
+# 浮动后会发生哪些事?
 
 <!-- vim-markdown-toc GFM -->
 * [清除浮动](#清除浮动)
-	* [浮动的特点](#浮动的特点)
-	* [浮动造成的影响](#浮动造成的影响)
+  * [浮动的特点](#浮动的特点)
+  * [浮动造成的影响](#浮动造成的影响)
 * [浮动问题](#浮动问题)
 * [参考](#参考)
 
@@ -31,16 +30,11 @@ clear有三个值:
 ### 浮动造成的影响
 
 1. 对父元素的影响
-
-        * 对于其父元素来说，元素浮动之后，它将脱离正常的文档流，所以它也无法撑开其父元素, 造成其父元素的塌陷。
-
+  * 对于其父元素来说，元素浮动之后，它将脱离正常的文档流，所以它也无法撑开其父元素, 造成其父元素的塌陷。
 2. 对其兄弟元素(非浮动)的影响
-
 	* 如果兄弟元素是块级元素: 该元素会忽略浮动元素的位置而占据它的位置，并且元素会处在浮动元素的下层，但它的内部文字和其他行内元素都会围绕浮动元素。
 	* 如果兄弟元素是内联元素：则元素会环绕浮动元素排列。
-
 3. 对其兄弟元素(浮动)的影响
-
 	* 同一个方向的浮动元素：当一个浮动元素在浮动过程中碰到同一个方向的浮动元素时，它会紧跟在它们后面。
 	* 相反方向的浮动元素：互不影响，在同一条水平线上，当空间不够时会被挤下去。
 
@@ -50,7 +44,7 @@ clear有三个值:
 
 另外一个问题, 当你有一下布局时：
 
-```
+```html
 <div>
 	<div class="fl">111</div>
 	<div class="fl">222</div>
@@ -63,7 +57,7 @@ footer {margin-top: 50px;clear: left;}
 
 因为使用了clear: left后，所以footer不在围绕浮动元素。但是你会发现，margin-top: 50px并不起作用。为了解决这个问题, 在HTML中添加新的div元素，并且设置它的class为clearfix。此时，可以取消了footer的clear:both;如下：
 
-```
+```html
 <div>
 	<div class="fl">111</div>
 	<div class="fl">222</div>
@@ -84,7 +78,7 @@ clearfix {clear: both;}
 * 第二种，The Overflow Method, 设置overflow: auto或者hidden，就可以了，但是它不是专门用来闭合浮动的，而且要小心overflow后可能会隐藏或者出现滚动条。
 * 第三种，推荐使用。
 
-```
+```css
 .clearfix:after {
 	content: " ";
 	display: block;
@@ -94,10 +88,7 @@ clearfix {clear: both;}
 
 ## 参考
 
-[All about floats](https://css-tricks.com/all-about-floats/)
-
-[那些年我们清除过的浮动](http://www.iyunlu.com/view/css-xhtml/55.html)
-
-[BFC神奇背后的原理](http://www.cnblogs.com/lhb25/p/inside-block-formatting-ontext.html)
-
-[mdn](https://developer.mozilla.org/zh-CN/docs/Learn/CSS/CSS_layout/Floats#清除浮动会变复杂)
+* [All about floats](https://css-tricks.com/all-about-floats/)
+* [那些年我们清除过的浮动](http://www.iyunlu.com/view/css-xhtml/55.html)
+* [BFC神奇背后的原理](http://www.cnblogs.com/lhb25/p/inside-block-formatting-ontext.html)
+* [mdn](https://developer.mozilla.org/zh-CN/docs/Learn/CSS/CSS_layout/Floats#清除浮动会变复杂)

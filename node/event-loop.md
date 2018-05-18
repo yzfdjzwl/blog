@@ -1,4 +1,4 @@
-# 目录
+# 浅析Node.js的Event Loop
 
 * [浅析Node.js的Event Loop](#浅析nodejs的event-loop)
 	* [引出问题](#引出问题)
@@ -12,9 +12,6 @@
 		* [它是如何工作的？](#它是如何工作的)
 	* [推荐阅读](#推荐阅读)
 	* [参考](#参考)
-
-
-# 浅析Node.js的Event Loop
 
 ## 引出问题
 

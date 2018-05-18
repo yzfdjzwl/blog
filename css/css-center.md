@@ -1,4 +1,6 @@
-```
+# 居中的多种方式
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>

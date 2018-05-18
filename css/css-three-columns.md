@@ -1,20 +1,17 @@
+# 常见的三列布局
+
 在这里，介绍几种我所了解到的几种三列布局。实现的方法分别是：
 
 1. 两边绝对定位，中间设置margin-left和margin-right。
-
 2. 两边分别左右浮动，中间设置margin-left和margin-right。
-
 3. 圣杯布局。
-
 4. 双飞翼布局。
-
 5. BFC布局，左边左浮动，设置margin-right：120px， 右边右浮动，设置margin-left：120px，设置中间部分：overflow: hidden, 形成BFC。
-
 6. flex，这里就没有单独介绍了。
 
 看代码：
 
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -1,6 +1,6 @@
-简单的画一个三角形，代码如下: 
+# 使用CSS画一个三角形
 
-```
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>

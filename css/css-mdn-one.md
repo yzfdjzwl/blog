@@ -1,16 +1,14 @@
-[本文为阅读MDN文档笔记](https://developer.mozilla.org/zh-CN/)
-
-# 目录
+# 阅读MDN文档之CSS选择器介绍(1)
 
 <!-- vim-markdown-toc GFM -->
 * [Different types of Selectors](#different-types-of-selectors)
-	* [Attribute Selectors](#attribute-selectors)
-		* [Presence and value attribute selectors](#presence-and-value-attribute-selectors)
-		* [Substring and value attribute selectors](#substring-and-value-attribute-selectors)
-	* [Pseudo-selectors](#pseudo-selectors)
-		* [Pseudo-classes](#pseudo-classes)
-		* [Pseudo-elements](#pseudo-elements)
-	* [Combinators](#combinators)
+  * [Attribute Selectors](#attribute-selectors)
+    * [Presence and value attribute selectors](#presence-and-value-attribute-selectors)
+    * [Substring and value attribute selectors](#substring-and-value-attribute-selectors)
+  * [Pseudo-selectors](#pseudo-selectors)
+    * [Pseudo-classes](#pseudo-classes)
+    * [Pseudo-elements](#pseudo-elements)
+  * [Combinators](#combinators)
 
 <!-- vim-markdown-toc -->
 

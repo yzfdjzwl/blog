@@ -1,14 +1,16 @@
+# 阅读MDN文档之基本盒模型(3)
+
 <!-- vim-markdown-toc GFM -->
 * [Box properties](#box-properties)
-	* [Margin collapsing](#margin-collapsing)
-		* [Adjacent siblings(相邻兄弟)](#adjacent-siblings相邻兄弟)
-		* [Parent and first/last child](#parent-and-firstlast-child)
-		* [Empty blocks](#empty-blocks)
+  * [Margin collapsing](#margin-collapsing)
+    * [Adjacent siblings(相邻兄弟)](#adjacent-siblings相邻兄弟)
+    * [Parent and first/last child](#parent-and-firstlast-child)
+    * [Empty blocks](#empty-blocks)
 * [Active learning: playing with boxes](#active-learning-playing-with-boxes)
 * [Advanced box manipulation (先进的盒子操作)](#advanced-box-manipulation-先进的盒子操作)
-	* [Overflow](#overflow)
-	* [Background clip](#background-clip)
-	* [Outline](#outline)
+  * [Overflow](#overflow)
+  * [Background clip](#background-clip)
+  * [Outline](#outline)
 * [Types of CSS boxes](#types-of-css-boxes)
 
 <!-- vim-markdown-toc -->

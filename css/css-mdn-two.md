@@ -1,13 +1,13 @@
-# 目录
+# 阅读MDN文档之层叠与继承(2)
 
 <!-- vim-markdown-toc GFM -->
 * [The cascade](#the-cascade)
-	* [Importance](#importance)
-	* [Specificity](#specificity)
-	* [Source order](#source-order)
-	* [A note on rule mixing](#a-note-on-rule-mixing)
+  * [Importance](#importance)
+  * [Specificity](#specificity)
+  * [Source order](#source-order)
+  * [A note on rule mixing](#a-note-on-rule-mixing)
 * [Inheritance](#inheritance)
-	* [Controlling inheritance](#controlling-inheritance)
+  * [Controlling inheritance](#controlling-inheritance)
 
 <!-- vim-markdown-toc -->
 
